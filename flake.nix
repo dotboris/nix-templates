@@ -9,15 +9,15 @@
     nixpkgs,
     flake-utils,
   }:
-    rec {
-      templates = {
+    {
+      templates = rec {
         simple-flake = {
           path = ./simple-flake;
           description = "Simple nix flake with minimal boilerplate.";
         };
-      };
 
-      defaultTemplate = templates.simple-flake;
+        default = simple-flake;
+      };
     }
     // flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {inherit system;};
