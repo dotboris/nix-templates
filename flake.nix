@@ -16,6 +16,11 @@
           description = "Simple nix flake with minimal boilerplate.";
         };
 
+        nodejs = {
+          path = ./nodejs;
+          description = "Minimal NodeJS dev shell with package manager provided by corepack.";
+        };
+
         default = simple-flake;
       };
     }
