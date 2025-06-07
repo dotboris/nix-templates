@@ -12,19 +12,34 @@
     flake-utils.lib.eachDefaultSystem (system: let
       overlays = [
         (final: prev: {
-          nodejs = prev.nodejs_20;
+          nodejs = prev.nodejs_22;
         })
       ];
       pkgs = import nixpkgs {inherit system overlays;};
     in {
-      formatter = pkgs.alejandra;
+      formatter = pkgs.writeShellApplication {
+        name = "alejandra-format-repo";
+        runtimeInputs = [pkgs.alejandra];
+        text = "alejandra .";
+      };
+
+      checks = {
+        format = pkgs.writeShellApplication {
+          name = "alejandra-check-repo";
+          runtimeInputs = [pkgs.alejandra];
+          text = "alejandra --check .";
+        };
+      };
 
       devShells.default = pkgs.mkShell {
         packages = [
-          pkgs.nodejs
+          # nix & flake
+          pkgs.nil
+          pkgs.alejandra
 
-          # Provides packages managers (pnpm / yarn based on `package.json`)
-          pkgs.corepack
+          # Nodejs
+          pkgs.nodejs
+          pkgs.corepack # Provides packages managers (pnpm / yarn based on `package.json`)
         ];
       };
     });

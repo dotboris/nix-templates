@@ -27,6 +27,25 @@
     // flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import nixpkgs {inherit system;};
     in {
-      formatter = pkgs.alejandra;
+      formatter = pkgs.writeShellApplication {
+        name = "alejandra-format-repo";
+        runtimeInputs = [pkgs.alejandra];
+        text = "alejandra .";
+      };
+
+      checks = {
+        format = pkgs.runCommand "alejandra-check-repo" {} ''
+          ${pkgs.alejandra}/bin/alejandra --check ${./.}
+          touch $out
+        '';
+      };
+
+      devShells.default = pkgs.mkShell {
+        packages = [
+          # nix & flake
+          pkgs.nil
+          pkgs.alejandra
+        ];
+      };
     });
 }
